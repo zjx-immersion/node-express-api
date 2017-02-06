@@ -10,45 +10,35 @@ import route from './apis/routes/route'
 const app = express();
 const upload = multer();
 
-app.use(express.static(__dirname + '/../public'));
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
 const port = process.env.PORT || 8080; // set our port
-
-// START THE SERVER
-// =============================================================================
-app.listen(port, () => {
-    console.log(util.format('%s %s', 'Srver is listening', port));
-});
-
-// ROUTES FOR OUR API
-// =============================================================================
-// create our router
 const router = express.Router();
-route.setRoutes(router);
 // REGISTER OUR ROUTES -------------------------------
-app.use('/api', router);
+route.setRoutes(router);
+
+app.use(express.static(__dirname + '/../public'))
+    .use(morgan('dev'))
+    .use(bodyParser.urlencoded({ extended: true }))
+    .use(bodyParser.json())
+    .use('/api', router)
+    .get('/hello', (req, res) => {
+        res.send('world');
+    })
+    .listen(port, () => {
+        console.log(util.format('%s %s', 'Srver is listening', port));
+    });
 
 // middleware to use for all requests
 router.use((req, res, next) => {
-    // do logging
-    console.log('Something is happening...');
-    next();
-});
-
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', (req, res) => {
-    res.json({ message: 'hello! welcome to our api!' });
-});
-
-app.get('/hello', (req, res) => {
-    res.send('world');
-});
-
-router.get('/sum/:x/:y', (req, res) => {
-    const x = req.params.x * 1;
-    const y = req.params.y * 1;
-    res.json({ result: x + y });
-});
+        // do logging
+        console.log('Something is happening...');
+        next();
+    })
+    // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
+    .get('/', (req, res) => {
+        res.json({ message: 'hello! welcome to our api!' });
+    })
+    .get('/sum/:x/:y', (req, res) => {
+        const x = req.params.x * 1;
+        const y = req.params.y * 1;
+        res.json({ result: x + y });
+    });
