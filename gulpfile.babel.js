@@ -4,6 +4,7 @@ import rimraf from 'rimraf';
 import run from 'run-sequence';
 import watch from 'gulp-watch';
 import server from 'gulp-live-server';
+import flow from 'gulp-flowtype';
 
 const paths = {
     js: ['./src/**/*.js'],
@@ -22,12 +23,20 @@ gulp.task('clean', cb => {
     rimraf(paths.destination, cb);
 });
 
-gulp.task('flow', shell.task(['flow'], { ignoreErrors: true }));
+//gulp.task('flow', shell.task(['flow'], { ignoreErrors: true }));
 
 // gulp.task('flow', () => {
 //     return gulp.src('./node_modules')
 //         .pipe(flow({ killFlow: false }));
 // });
+
+gulp.task('flow', () => {
+    return gulp.src('src/**/*.js')
+        .pipe(flow({
+            killFlow: false,
+            declarations: './flow-typed'
+        }));
+});
 
 gulp.task('babel', shell.task(['babel src --out-dir app']));
 

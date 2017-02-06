@@ -18,7 +18,6 @@ const port = process.env.PORT || 8080; // set our port
 
 // ROUTES FOR OUR API
 // =============================================================================
-
 // create our router
 const router = express.Router();
 
