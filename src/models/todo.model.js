@@ -1,7 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+let Schema = mongoose.Schema;
 // Defining schema for our Todo API 
-var TodoSchema = Schema({
+let TodoSchema = Schema({
     todo: { type: String },
     name: { type: String },
     completed: { type: Boolean, default: false },
@@ -9,7 +9,7 @@ var TodoSchema = Schema({
 });
 
 // True since it is a parallel middleware
-TodoSchema.pre('save', function(next, done) {
+TodoSchema.pre('save', (next, done) => {
     if (!this.todo) {
         next(new Error("Todo should not be null"));
     }
@@ -17,6 +17,6 @@ TodoSchema.pre('save', function(next, done) {
 });
 
 //Exporting our model 
-var TodoModel = mongoose.model('Todo', TodoSchema);
+let TodoModel = mongoose.model('Todo', TodoSchema);
 
 module.exports = TodoModel;
