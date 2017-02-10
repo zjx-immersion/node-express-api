@@ -1,3 +1,3 @@
 exports.setRoutes = router => {
-    router.use('/items', require('./routers/item-api'));
+    router.use('/todos', require('./routers/todo.api'));
 };

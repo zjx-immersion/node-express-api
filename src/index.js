@@ -5,25 +5,30 @@ import bodyParser from 'body-parser';
 import multer from 'multer';
 import morgan from 'morgan';
 import util from 'util';
+import mongoose from 'mongoose';
+import cors from 'cors';
 import route from './apis/routes/route'
+import config from './config/config';
 
 const app = express();
 const upload = multer();
 
-const port = process.env.PORT || 8080; // set our port
+const port = config.port; // set our port
 const router = express.Router();
 // REGISTER OUR ROUTES -------------------------------
 route.setRoutes(router);
 
 app.use(express.static(__dirname + '/../public'))
     .use(morgan('dev'))
+    .use(cors())
     .use(bodyParser.urlencoded({ extended: true }))
     .use(bodyParser.json())
     .use('/api', router)
     .get('/hello', (req, res) => {
         res.send('world');
     })
-    .listen(port, () => {
+    .listen(port, (err) => {
+        if (err) throw err;
         console.log(util.format('%s %s', 'Srver is listening', port));
     });
 
@@ -42,3 +47,10 @@ router.use((req, res, next) => {
         const y = req.params.y * 1;
         res.json({ result: x + y });
     });
+
+//Connecting MongoDB using mongoose to our application 
+mongoose.connect(config.db);
+//This callback will be triggered once the connection is successfully established to MongoDB 
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose default connection open to ' + config.db);
+});

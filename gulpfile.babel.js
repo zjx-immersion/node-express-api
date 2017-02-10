@@ -8,7 +8,8 @@ import flow from 'gulp-flowtype';
 
 const paths = {
     js: ['./src/**/*.js'],
-    destination: './app'
+    destination: './app',
+    test: './test/**/*.js'
 }
 
 gulp.task('default', cb => {
@@ -31,7 +32,7 @@ gulp.task('clean', cb => {
 // });
 
 gulp.task('flow', () => {
-    return gulp.src('src/**/*.js')
+    return gulp.src(paths.js)
         .pipe(flow({
             killFlow: false,
             declarations: './flow-typed'
@@ -39,6 +40,25 @@ gulp.task('flow', () => {
 });
 
 gulp.task('babel', shell.task(['babel src --out-dir app']));
+
+//#-------------------Test Coverage----------------------#//
+import istanbul from 'gulp-istanbul';
+import mocha from 'gulp-mocha';
+import isparta from 'isparta';
+
+gulp.task('pre-test-coverage', () => {
+    return gulp.src(paths.js)
+        .pipe(istanbul({ instrumenter: require('isparta').Instrumenter }))
+        .pipe(istanbul.hookRequire());
+})
+
+gulp.task('test:coverage', ['pre-test-coverage'], () => {
+        return gulp.src(paths.test)
+            .pipe(mocha())
+            .pipe(istanbul.writeReports())
+            .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
+    })
+    //#------------------------------------------------------#//
 
 let express;
 
